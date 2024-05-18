@@ -1,14 +1,16 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { AssinaturaValidaService } from './assinatura-valida.service'
 
-@Controller()
-export class AssinaturaValidasController {
+@Controller('assinaturasvalidas')
+export class AssinaturaValidaController {
   constructor(
-    private readonly assinaturasValidasService: AssinaturaValidaService,
+    private readonly assinaturaValidaService: AssinaturaValidaService,
   ) {}
 
   @Get(':codass')
-  async verificarValidade(@Param('codass') codass: string): Promise<boolean> {
-    return this.assinaturasValidasService.verificarValidade(codass)
+  async verificarValidade(
+    @Param('codass') codass: string,
+  ): Promise<{ status: string }> {
+    return this.assinaturaValidaService.verificarValidade(codass)
   }
 }

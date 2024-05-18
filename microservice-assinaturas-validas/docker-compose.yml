@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  cache:
+    container_name: microservice-assinatura-valida-cache
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data

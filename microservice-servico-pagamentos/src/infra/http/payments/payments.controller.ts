@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { CreatePaymentUseCase } from 'src/domain/application/use-cases/create-payment'
 import { PaymentPresenter } from 'src/infra/database/prisma/presenters/payment-presenter'
 import { z } from 'zod'
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 const createPaymentBodySchema = z.object({
   codAssinatura: z.string(),
@@ -10,11 +11,33 @@ const createPaymentBodySchema = z.object({
 
 type CreatePaymentBodySchema = z.infer<typeof createPaymentBodySchema>
 
+class CreatePaymentDto {
+  codAssinatura: string
+  valorPago: number
+}
+
+class PaymentResponseDto {
+  pagamento: {
+    codAssinatura: string
+    valorPago: number
+    dataPagamento: Date
+  }
+}
+
+@ApiTags('pagamentos')
 @Controller('/registrarpagamento')
 export class PaymentsController {
   constructor(private createPayment: CreatePaymentUseCase) {}
 
   @Post()
+  @ApiOperation({ summary: 'Registra o pagamento' })
+  @ApiBody({ type: CreatePaymentDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Pagamento registrado com sucesso!',
+    type: PaymentResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   async create(@Body() body: CreatePaymentBodySchema) {
     const { codAssinatura, valorPago } = createPaymentBodySchema.parse(body)
 

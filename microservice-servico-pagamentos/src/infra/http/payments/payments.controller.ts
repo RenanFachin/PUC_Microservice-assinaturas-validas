@@ -3,6 +3,7 @@ import { CreatePaymentUseCase } from 'src/domain/application/use-cases/create-pa
 import { PaymentPresenter } from 'src/infra/database/prisma/presenters/payment-presenter'
 import { z } from 'zod'
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { CreatePaymentDto, PaymentResponseDto } from './dto/create-payment-dto'
 
 const createPaymentBodySchema = z.object({
   codAssinatura: z.string(),
@@ -10,19 +11,6 @@ const createPaymentBodySchema = z.object({
 })
 
 type CreatePaymentBodySchema = z.infer<typeof createPaymentBodySchema>
-
-class CreatePaymentDto {
-  codAssinatura: string
-  valorPago: number
-}
-
-class PaymentResponseDto {
-  pagamento: {
-    codAssinatura: string
-    valorPago: number
-    dataPagamento: Date
-  }
-}
 
 @ApiTags('pagamentos')
 @Controller('/registrarpagamento')

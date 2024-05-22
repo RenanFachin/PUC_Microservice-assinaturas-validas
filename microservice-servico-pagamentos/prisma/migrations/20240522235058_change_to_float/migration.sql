@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "pagamentos" ALTER COLUMN "valor_pago" SET DATA TYPE DOUBLE PRECISION;

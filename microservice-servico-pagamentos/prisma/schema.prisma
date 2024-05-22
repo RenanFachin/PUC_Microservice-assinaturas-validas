@@ -11,7 +11,7 @@ datasource db {
 model Pagamento{
   id String @id @default(uuid())
   codAssinatura String @map("cod_assinatura")
-  valorPago Int @map("valor_pago")
+  valorPago Float @map("valor_pago")
   dataPagamento DateTime @map("data_pagamento")
 
 

@@ -1,7 +1,8 @@
 import { Pagamento } from 'src/domain/entities/pagamentos'
 import { PagamentoRepository } from '../repositories/pagamentos-repository'
-import { Either, right } from 'src/core/either'
+import { Either, left, right } from 'src/core/either'
 import { Injectable } from '@nestjs/common'
+import { InvalidPaymentValueError } from '@/core/errors/invalid-payment-value'
 
 interface CreatePaymentRequest {
   codAssinatura: string
@@ -9,7 +10,7 @@ interface CreatePaymentRequest {
 }
 
 type CreatePaymentUseCaseResponse = Either<
-  null,
+  InvalidPaymentValueError,
   {
     pagamento: Pagamento
   }
@@ -23,6 +24,10 @@ export class CreatePaymentUseCase {
     codAssinatura,
     valorPago,
   }: CreatePaymentRequest): Promise<CreatePaymentUseCaseResponse> {
+    if (valorPago < 0) {
+      return left(new InvalidPaymentValueError())
+    }
+
     const novoPagamento = Pagamento.create({
       codAssinatura,
       valorPago,

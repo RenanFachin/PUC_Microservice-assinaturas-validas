@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { CreatePaymentUseCase } from 'src/domain/application/use-cases/create-payment'
 import { PaymentPresenter } from 'src/infra/database/prisma/presenters/payment-presenter'
 import { z } from 'zod'
@@ -35,7 +35,7 @@ export class PaymentsController {
     })
 
     if (result.isLeft()) {
-      throw new Error()
+      throw new BadRequestException(result.value.message)
     }
 
     const { pagamento } = result.value

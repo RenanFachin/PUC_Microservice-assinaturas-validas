@@ -1,9 +1,16 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  Inject,
+} from '@nestjs/common'
 import { CreatePaymentUseCase } from 'src/domain/application/use-cases/create-payment'
 import { PaymentPresenter } from 'src/infra/database/prisma/presenters/payment-presenter'
 import { z } from 'zod'
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreatePaymentDto, PaymentResponseDto } from './dto/create-payment-dto'
+import { ClientKafka } from '@nestjs/microservices'
 
 const createPaymentBodySchema = z.object({
   codAssinatura: z.string(),
@@ -15,7 +22,10 @@ type CreatePaymentBodySchema = z.infer<typeof createPaymentBodySchema>
 @ApiTags('pagamentos')
 @Controller('/registrarpagamento')
 export class PaymentsController {
-  constructor(private createPayment: CreatePaymentUseCase) {}
+  constructor(
+    @Inject('PAYMENT_SERVICE') private clientKafka: ClientKafka,
+    private createPayment: CreatePaymentUseCase,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Registra o pagamento' })
@@ -40,8 +50,18 @@ export class PaymentsController {
 
     const { pagamento } = result.value
 
+    const paymentEvent = await this.createPayment.execute(pagamento)
+    this.clientKafka.emit('payment.created', JSON.stringify(CreatePaymentDto))
+
+    if (paymentEvent.isLeft()) {
+      throw new BadRequestException()
+    }
+
+    console.log(paymentEvent.value.pagamento.toString())
+
     return {
       pagamento: PaymentPresenter.toHTTP(pagamento),
+      paymentEvent,
     }
   }
 }

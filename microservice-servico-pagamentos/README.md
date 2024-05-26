@@ -41,7 +41,7 @@ O microserviço possui um banco de dados próprio, independente do serviço prin
 npm install
 ```
 
-2. Rodar o container docker
+2. Rodar o container docker (Postgresql e kafka)
 ```bash
 docker compose up -d
 ```
@@ -81,11 +81,11 @@ npx prisma studio
 http://localhost:3002/docs
 ```
 
-<!-- Testes
+Testes unitários
 
 ```bash
 npm run test
-``` -->
+```
 
 **O servidor será iniciado na porta 3002**
 **OBS: O serviço principal deve estar rodando de maneira conjuta com o microserviço para que funcione corretamente**

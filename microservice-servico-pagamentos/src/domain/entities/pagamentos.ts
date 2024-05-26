@@ -25,4 +25,8 @@ export class Pagamento extends Entity<PagamentosProps> {
 
     return pagamento
   }
+
+  toString() {
+    return `PaymentEvent(id: ${this.codigo}, codAssinatura: ${this.codAssinatura}, valorPago: ${this.valorPago}, dataPagamento: ${this.dataPagamento.toISOString()})`
+  }
 }
